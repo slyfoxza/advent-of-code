@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::f32::consts::FRAC_PI_2;
 use std::collections::BTreeSet;
 use std::io::{self, Read};
 
@@ -21,46 +22,34 @@ impl PartialOrd for Point {
 }
 
 struct IterState {
-    dx: i32,
-    dy: i32,
+    a: f32,
     p: Point
 }
 
 fn blocks_away(input: &str) -> (i32, Option<i32>) {
     let mut seen = BTreeSet::new();
-    let mut state = IterState { dx: 0, dy: 1, p: Point { x: 0, y: 0 } };
+    let mut state = IterState { a: FRAC_PI_2, p: Point { x: 0, y: 0 } };
     let mut repeat = None;
     for instruction in input.split(',').map(|i| i.trim()) {
-        let direction = instruction.chars().next().unwrap();
-        if direction == 'L' {
-            if state.dx != 0 {
-                state.dy = state.dx;
-                state.dx = 0;
-            } else {
-                state.dx = -state.dy;
-                state.dy = 0;
-            }
-        } else {
-            if state.dx != 0 {
-                state.dy = -state.dx;
-                state.dx = 0;
-            } else {
-                state.dx = state.dy;
-                state.dy = 0;
-            }
-        }
+        state.a += match instruction.chars().next().unwrap() {
+            'L' => FRAC_PI_2,
+            'R' => -FRAC_PI_2,
+            _ => continue
+        };
+        let dx = state.a.sin() as i32;
+        let dy = state.a.cos() as i32;
         let distance = i32::from_str_radix(&instruction[1..], 10).unwrap();
         for i in 0..distance {
             let p = Point {
-                x: state.p.x + (i + 1) * state.dx,
-                y: state.p.y + (i + 1) * state.dy
+                x: state.p.x + (i + 1) * dx,
+                y: state.p.y + (i + 1) * dy
             };
             if repeat.is_none() && !seen.insert(p.clone()) {
                 repeat = Some(p);
             }
         }
-        state.p.x += distance * state.dx;
-        state.p.y += distance * state.dy;
+        state.p.x += distance * dx;
+        state.p.y += distance * dy;
     }
     let repeat = repeat.map(|p| p.x.abs() + p.y.abs());
     (state.p.x.abs() + state.p.y.abs(), repeat)
