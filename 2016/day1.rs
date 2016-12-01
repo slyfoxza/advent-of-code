@@ -1,23 +1,29 @@
-use std::cmp::Ordering;
+use std::cmp;
+use std::collections::LinkedList;
 use std::f32::consts::FRAC_PI_2;
-use std::collections::BTreeSet;
 use std::io::{self, Read};
 
-#[derive(Clone, Eq, Ord)]
+#[derive(Clone)]
 struct Point {
     x: i32,
     y: i32
 }
 
-impl PartialEq for Point {
-    fn eq(&self, other: &Point) -> bool {
-        self.x == other.x && self.y == other.y
-    }
+struct Span {
+    begin: i32,
+    end: i32,
+    horizontal: bool,
+    z: i32
 }
 
-impl PartialOrd for Point {
-    fn partial_cmp(&self, other: &Point) -> Option<Ordering> {
-        Some(self.cmp(other))
+impl Span {
+    fn new(a: i32, b: i32, horizontal: bool, z: i32) -> Span {
+        Span {
+            begin: cmp::min(a, b),
+            end: cmp::max(a, b),
+            horizontal: horizontal,
+            z: z
+        }
     }
 }
 
@@ -27,7 +33,7 @@ struct IterState {
 }
 
 fn blocks_away(input: &str) -> (i32, Option<i32>) {
-    let mut seen = BTreeSet::new();
+    let mut spans: LinkedList<Span> = LinkedList::new();
     let mut state = IterState { a: FRAC_PI_2, p: Point { x: 0, y: 0 } };
     let mut repeat = None;
     for instruction in input.split(',').map(|i| i.trim()) {
@@ -39,17 +45,49 @@ fn blocks_away(input: &str) -> (i32, Option<i32>) {
         let dx = state.a.sin() as i32;
         let dy = state.a.cos() as i32;
         let distance = i32::from_str_radix(&instruction[1..], 10).unwrap();
-        for i in 0..distance {
-            let p = Point {
-                x: state.p.x + (i + 1) * dx,
-                y: state.p.y + (i + 1) * dy
+        let x1 = state.p.x + distance * dx;
+        let y1 = state.p.y + distance * dy;
+        let horizontal = dy == 0;
+        if repeat.is_none() {
+            let span = match horizontal {
+                true => Span::new(state.p.x, x1, true, y1),
+                false => Span::new(state.p.y, y1, false, x1)
             };
-            if repeat.is_none() && !seen.insert(p.clone()) {
-                repeat = Some(p);
+            {
+                let mut hit_spans = spans.iter_mut()
+                    .filter(|s| {
+                        s.horizontal != span.horizontal
+                            && match span.horizontal {
+                                true => s.begin < y1 && s.end > y1
+                                    && s.z >= cmp::min(x1, state.p.x)
+                                    && s.z <= cmp::max(x1, state.p.x),
+                                false => s.begin < x1 && s.end > x1
+                                    && s.z >= cmp::min(y1, state.p.y)
+                                    && s.z <= cmp::max(y1, state.p.y)
+                        }
+                    })
+                    .collect::<Vec<_>>();
+                hit_spans.sort_by(|a, b| {
+                    if dx == 1 || dy == 1 {
+                        a.z.cmp(&b.z)
+                    } else {
+                        b.z.cmp(&a.z)
+                    }
+                });
+                match hit_spans.first() {
+                        Some(hs) => {
+                            repeat = Some(match span.horizontal {
+                                true => Point { x: hs.z, y: y1 },
+                                false => Point { x: x1, y: hs.z }
+                            });
+                        },
+                        None => {}
+                    };
             }
+            spans.push_back(span);
         }
-        state.p.x += distance * dx;
-        state.p.y += distance * dy;
+        state.p.x = x1;
+        state.p.y = y1;
     }
     let repeat = repeat.map(|p| p.x.abs() + p.y.abs());
     (state.p.x.abs() + state.p.y.abs(), repeat)
