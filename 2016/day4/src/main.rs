@@ -43,22 +43,43 @@ impl<'a> Room<'a> {
                 c @ _ => c
             }
         });
-        self.checksum.bytes().enumerate()
-            .all(|b| {
-                histo[b.0].0 == (b.1 - b'a') as usize
-            })
+        self.checksum
+            .bytes()
+            .enumerate()
+            .all(|b| histo[b.0].0 == (b.1 - b'a') as usize)
+    }
+
+    fn decrypt_name(&self) -> String {
+        let mut result = Vec::with_capacity(self.name.len());
+        let shift = (self.sector_id % 26) as u8;
+        for b in self.name.bytes() {
+            if b == b'-' {
+                result.push(b' ');
+                continue;
+            }
+            result.push((b - b'a' + shift) % 26 + b'a')
+        }
+        String::from_utf8(result).unwrap()
     }
 }
 
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
-    let sector_id_sum: u32 = input.lines()
+    let valid_rooms: Vec<_> = input.lines()
         .map(|i| Room::from_string(i))
         .filter(|ref r| r.is_valid())
+        .collect();
+    let sector_id_sum: u32 = valid_rooms.iter()
         .map(|r| r.sector_id as u32)
         .sum();
     println!("Sector ID sum: {}", sector_id_sum);
+    for room in valid_rooms.iter() {
+        let name = room.decrypt_name();
+        if name.contains("north") {
+            println!("North Pole objects room: {} ({})", name, room.sector_id);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -81,5 +102,11 @@ mod tests {
     #[test]
     fn invalidity() {
         assert!(!Room::from_string("aab-2[ba]").is_valid());
+    }
+
+    #[test]
+    fn decryption() {
+        assert_eq!("very encrypted name", Room::from_string(
+            "qzmt-zixmtkozy-ivhz-343[a]").decrypt_name());
     }
 }
