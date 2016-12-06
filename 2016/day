@@ -5,5 +5,5 @@ if [ -d day$1 ]; then
     cd day$1&&cargo test&&cargo run<../day$1.txt
 else
     rustc --cfg tests --test -o test-day$1 day$1.rs&&./test-day$1\
-	&&rustc day$1.rs&&./day$1<day$1.txt
+	&&rustc -O day$1.rs&&./day$1<day$1.txt
 fi
