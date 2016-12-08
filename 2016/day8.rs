@@ -1,3 +1,4 @@
+use std::fmt::{self, Display, Formatter};
 use std::io::{self, Read};
 use std::iter::Iterator;
 
@@ -54,12 +55,29 @@ impl Screen {
     }
 }
 
+impl Display for Screen {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let mut s = String::with_capacity((self.w + 1) * self.h);
+        let mut i = 0;
+        for c in self.a.iter() {
+            s.push(if *c == 0 { ' ' } else { '#' });
+            i += 1;
+            if i == self.w {
+                i = 0;
+                s.push('\n');
+            }
+        }
+        f.write_str(s.as_str())
+    }
+}
+
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
     let mut screen = Screen::new(50, 6);
     screen.execute(input.lines());
     println!("{}", screen.count());
+    println!("{}", screen);
 }
 
 #[cfg(test)]
