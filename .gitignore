@@ -2,3 +2,4 @@ target/
 
 day?
 test-day?
+*.exe
