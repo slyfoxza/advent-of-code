@@ -17,7 +17,15 @@ struct Bot {
 
 impl Display for Bot {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "#{}: {}, {}", self.id, self.values[0], self.values[1])
+        write!(f, "#{}: {}, {} ", self.id, self.values[0], self.values[1])
+            .and_then(|r| match self.low {
+                Some(low) => write!(f, "low->{} ", low),
+                None => Ok(r)
+            })
+            .and_then(|r| match self.high {
+                Some(high) => write!(f, "high->{}", high),
+                None => Ok(r)
+            })
     }
 }
 
@@ -107,7 +115,7 @@ fn parse_give(input: &str, bots: &mut Vec<Bot>) {
             i = find_bot(id, bots).unwrap();
             low_id
         },
-        _ => -low_id
+        _ => -low_id - 1
     };
     bots[i].low = Some(low_id);
     let high_id = captures.at(5).map(|v| v.parse::<BotId>().unwrap()).unwrap();
@@ -117,7 +125,7 @@ fn parse_give(input: &str, bots: &mut Vec<Bot>) {
             i = find_bot(id, bots).unwrap();
             high_id
         },
-        _ => -high_id
+        _ => -high_id - 1
     };
     bots[i].high = Some(high_id);
     try_update(bots, i);
