@@ -13,10 +13,32 @@ impl Eq for Floor {}
 
 impl PartialEq for Floor {
     fn eq(&self, other: &Floor) -> bool {
-        self.generators.iter().enumerate()
+        let perfect_eq = self.generators.iter().enumerate()
             .all(|g| other.generators[g.0] == *g.1)
             && self.microchips.iter().enumerate()
-            .all(|m| other.microchips[m.0] == *m.1)
+            .all(|m| other.microchips[m.0] == *m.1);
+        if perfect_eq {
+            return true;
+        }
+        let n_matched = self.generators.iter().enumerate()
+            .filter(|g| *g.1 && self.microchips[g.0]).count();
+        let n_matched_other = other.generators.iter().enumerate()
+            .filter(|g| *g.1 && other.microchips[g.0]).count();
+        if n_matched != n_matched_other {
+            return false;
+        }
+        let n_gens = self.generators.iter().enumerate()
+            .filter(|g| *g.1 && !self.microchips[g.0]).count();
+        let n_gens_other = other.generators.iter().enumerate()
+            .filter(|g| *g.1 && !other.microchips[g.0]).count();
+        if n_gens != n_gens_other {
+            return false;
+        }
+        let n_mcs = self.microchips.iter().enumerate()
+            .filter(|m| *m.1 && !self.generators[m.0]).count();
+        let n_mcs_other = other.microchips.iter().enumerate()
+            .filter(|m| *m.1 && !other.generators[m.0]).count();
+        n_mcs == n_mcs_other
     }
 }
 
@@ -171,7 +193,11 @@ fn find_win(initial_state: State) -> Result<u8, u8> {
             return Ok(state.depth);
         }
         let n_elements = state.floors[0].generators.len();
-        for elevator_dst in 0..4 {
+        let first_floor = state.floors.iter().enumerate()
+            .filter(|f| f.1.generators.iter().any(|g| *g)
+                    || f.1.microchips.iter().any(|m| *m))
+            .map(|f| f.0).next().unwrap() as u8;
+        for elevator_dst in first_floor..4 {
             let diff = elevator_dst as i8 - state.elevator as i8;
             if diff != -1 && diff != 1 {
                 continue;
@@ -210,6 +236,33 @@ fn main() {
                     microchips: vec![false, false, false, false, false] },
             Floor { generators: vec![false, false, false, false, false],
                     microchips: vec![false, false, false, false, false] },
+        ]
+    };
+    if let Ok(steps) = find_win(initial_state) {
+        println!("{}", steps);
+    } else {
+        println!("rekt");
+    }
+
+    let initial_state = State {
+        depth: 0,
+        elevator: 0,
+        floors: [
+            Floor { generators: vec![true, true, true, true, true, true, true],
+                    microchips: vec![false, true, false, true, true, true,
+                                     true] },
+            Floor { generators: vec![false, false, false, false, false, false,
+                                     false],
+                    microchips: vec![true, false, true, false, false, false,
+                                     false] },
+            Floor { generators: vec![false, false, false, false, false, false,
+                                     false],
+                    microchips: vec![false, false, false, false, false, false,
+                                     false] },
+            Floor { generators: vec![false, false, false, false, false, false,
+                                     false],
+                    microchips: vec![false, false, false, false, false, false,
+                                     false] },
         ]
     };
     if let Ok(steps) = find_win(initial_state) {
