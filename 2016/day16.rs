@@ -25,7 +25,8 @@ fn calc_checksum(disk_length: usize, initial_state: &str) -> String {
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
-    println!("{}", calc_checksum(272, input.trim()));
+    println!("{} {}", calc_checksum(272, input.trim()),
+             calc_checksum(35651584, input.trim()));
 }
 
 #[cfg(test)]
