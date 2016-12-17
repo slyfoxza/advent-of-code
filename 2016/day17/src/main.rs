@@ -2,6 +2,7 @@ extern crate crypto;
 
 use crypto::digest::Digest;
 use crypto::md5::Md5;
+use std::cmp;
 use std::io::{self, Read};
 use std::collections::VecDeque;
 
@@ -16,13 +17,19 @@ fn next_path(current_path: &String, next_char: char) -> String {
     return next_path
 }
 
-fn find_path(passcode: &str) -> Result<String, String> {
+fn find_path(passcode: &str) -> Result<(String, usize), String> {
     let mut queue = VecDeque::new();
     queue.push_back(State { path: String::new(), x: 0, y: 0 });
     let mut md5 = Md5::new();
+    let mut shortest = None;
+    let mut longest = 0;
     while let Some(current) = queue.pop_front() {
         if current.x == 3 && current.y == 3 {
-            return Ok(current.path)
+            if shortest.is_none() {
+                shortest = Some(current.path.clone());
+            }
+            longest = cmp::max(longest, current.path.len());
+            continue;
         }
         let mut hash_input = String::from(passcode);
         hash_input.push_str(current.path.as_str());
@@ -55,17 +62,25 @@ fn find_path(passcode: &str) -> Result<String, String> {
             });
         }
         if queue.is_empty() {
-            return Err(current.path)
+            if shortest.is_none() {
+                return Err(current.path)
+            }
         }
     }
-    Err(String::from(""))
+    match shortest {
+        Some(s) => Ok((s, longest)),
+        None => Err(String::from(""))
+    }
 }
 
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
     match find_path(input.trim()) {
-        Ok(p) => println!("Shortest path: {}", p),
+        Ok(p) => {
+            println!("Shortest path: {}", p.0);
+            println!("Longest path : {}", p.1);
+        },
         Err(p) => println!("All doors locked after: {}", p)
     }
 }
@@ -79,18 +94,19 @@ mod test {
 
     #[test]
     fn test_given_ok1() {
-        assert_eq!(Ok(String::from("DDRRRD")), super::find_path("ihgpwlah"));
+        assert_eq!(Ok((String::from("DDRRRD"), 370)),
+                   super::find_path("ihgpwlah"));
     }
 
     #[test]
     fn test_given_ok2() {
-        assert_eq!(Ok(String::from("DDUDRLRRUDRD")),
+        assert_eq!(Ok((String::from("DDUDRLRRUDRD"), 492)),
                    super::find_path("kglvqrro"));
     }
 
     #[test]
     fn test_given_ok3() {
-        assert_eq!(Ok(String::from("DRURDRUDDLLDLUURRDULRLDUUDDDRR")),
+        assert_eq!(Ok((String::from("DRURDRUDDLLDLUURRDULRLDUUDDDRR"), 830)),
                    super::find_path("ulqzkmiv"));
     }
 }
