@@ -36,7 +36,9 @@ fn safe_tile_count(start: &str, rows: u32) -> usize {
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
-    println!("# safe tiles: {}", safe_tile_count(input.trim(), 40));
+    println!("# safe tiles (40   rows): {}", safe_tile_count(input.trim(), 40));
+    println!("# safe tiles (400k rows): {}", safe_tile_count(input.trim(),
+                                                             400000));
 }
 
 #[cfg(test)]
