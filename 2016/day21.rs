@@ -103,6 +103,42 @@ fn execute(instr: &str, input: &str) -> String {
     }
 }
 
+fn execute_rev(instr: &str, input: &str) -> String {
+    let parts = instr.split_whitespace().collect::<Vec<_>>();
+    if instr.starts_with("swap position ") {
+        let x = parts[2].parse().unwrap();
+        let y = parts[5].parse().unwrap();
+        swap_position(input, cmp::min(x, y), cmp::max(x, y))
+    } else if instr.starts_with("rotate based on position of letter ") {
+        let c = parts[6].chars().next().unwrap();
+        match input.char_indices().find(|ci| ci.1 == c).map(|ci| ci.0).unwrap() {
+            i if i == 0 || i == 1 => rotate_by(input, 1, true),
+            i if i == 2 => rotate_by(input, 2, false),
+            i if i == 3 => rotate_by(input, 2, true),
+            i if i == 4 => rotate_by(input, 1, false),
+            i if i == 5 => rotate_by(input, 3, true),
+            i if i == 7 => rotate_by(input, 4, false),
+            _ => String::from(input)
+        }
+    } else if instr.starts_with("rotate ") {
+        let is_left = parts[1] == "left";
+        let n = parts[2].parse::<usize>().unwrap() % input.len();
+        rotate_by(input, n, !is_left)
+    } else if instr.starts_with("reverse positions ") {
+        let x = parts[2].parse().unwrap();
+        let y = parts[4].parse().unwrap();
+        reverse(input, cmp::min(x, y), cmp::max(x, y))
+    } else if instr.starts_with("move position ") {
+        let x = parts[2].parse().unwrap();
+        let y = parts[5].parse().unwrap();
+        move_to(input, y, x)
+    } else if instr.starts_with("swap letter ") {
+        swap_letter(input, parts[2], parts[5])
+    } else {
+        panic!("Unrecognized instruction: {}", instr);
+    }
+}
+
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
@@ -112,7 +148,15 @@ fn main() {
         result = execute(line.trim(), &result);
         println!("{} <- {}", result, line);
     }
+    println!("Scrambled password: {}", result);
+
+    result = String::from("fbgdceah");
     println!("{}", result);
+    for line in input.lines().rev() {
+        result = execute_rev(line.trim(), &result);
+        println!("{} <- (rev) {}", result, line);
+    }
+    println!("Unscrambled password: {}", result);
 }
 
 #[cfg(test)]
