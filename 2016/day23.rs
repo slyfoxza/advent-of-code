@@ -131,4 +131,6 @@ fn main() {
     let program = compile(&input);
     let state = execute(&program, [7, 0, 0, 0]);
     println!("{:?}", state);
+    let state = execute(&program, [12, 0, 0, 0]);
+    println!("{:?}", state);
 }
