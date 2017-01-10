@@ -30,8 +30,8 @@ namespace aoc201605 {
 		Md5& operator=(const Md5&) = delete;
 		Md5& operator=(Md5&&) = delete;
 
-		void hash(const std::string& data);
-		void finish(std::array<unsigned char, 16>& output);
+		void hash(const std::string& data) const;
+		void finish(std::array<unsigned char, 16>& output) const;
 
 		private:
 		BCRYPT_HASH_HANDLE handle_;
