@@ -1,5 +1,6 @@
 CPPFLAGS += -DUSE_OPENSSL
-CXXFLAGS += -g
+CXXFLAGS += -O2
+LDFLAGS += -pthread
 LDADD += $(shell pkg-config --libs openssl)
 
 .PHONY: all clean
@@ -7,7 +8,7 @@ LDADD += $(shell pkg-config --libs openssl)
 all: day5
 
 day5: main.o md5-openssl.o
-	$(CXX) -o $@ $+ $(LDADD)
+	$(CXX) $(LDFLAGS) -o $@ $+ $(LDADD)
 
 clean:
 	$(RM) day5 *.o

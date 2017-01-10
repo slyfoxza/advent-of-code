@@ -20,13 +20,13 @@ Md5::Md5(const Md5GlobalState&)
 	initializeMd5Digest(context_.get());
 }
 
-void Md5::hash(const std::string& data) {
+void Md5::hash(const std::string& data) const {
 	if(EVP_DigestUpdate(context_.get(), data.data(), data.size()) == 0) {
 		throw std::runtime_error("Failed updating digest with data");
 	}
 }
 
-void Md5::finish(std::array<unsigned char, 16>& output) {
+void Md5::finish(std::array<unsigned char, 16>& output) const {
 	if(EVP_DigestFinal_ex(context_.get(), output.data(), nullptr) == 0) {
 		throw std::runtime_error("Failed to finalize digest");
 	}
