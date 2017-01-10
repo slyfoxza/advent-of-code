@@ -20,15 +20,26 @@ namespace {
 		const aoc201605::Md5 md5(md5GlobalState);
 		Md5Hash hash;
 		std::string string(prefix);
+		const size_t prefixLen = prefix.size();
+		string.append(std::to_string(start));
 		for(unsigned i = start; (i < end) && (i >= start); ++i) {
-			string.append(std::to_string(i));
 			md5.hash(string);
 			md5.finish(hash);
 			if((hash[0] == 0x00) && (hash[1] == 0x00)
 					&& ((hash[2] & 0xF0) == 0x00)) {
 				candidates.push_back(i);
 			}
-			string = prefix;
+			size_t si = string.size() - 1;
+			for(; si >= prefixLen; --si) {
+				if(string[si]++ == '9') {
+					string[si] = '0';
+				} else {
+					break;
+				}
+			}
+			if(si == prefixLen - 1) {
+				string.insert(prefixLen, 1, '1');
+			}
 		}
 		promise.set_value(candidates);
 	}
