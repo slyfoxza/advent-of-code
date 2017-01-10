@@ -3,8 +3,12 @@
   <ItemGroup>
     <ProjectConfiguration Include="Debug|x64" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="md5-cng.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>USE_CNG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <Link>
       <AdditionalDependencies>BCrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
