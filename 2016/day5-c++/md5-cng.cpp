@@ -1,7 +1,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include "md5-cng.h"
 
@@ -38,8 +37,9 @@ Md5::~Md5() {
 }
 
 void Md5::hash(const std::string& data) const {
-	std::vector<unsigned char> v(data.cbegin(), data.cend());
-	const NTSTATUS rc = BCryptHashData(handle_, v.data(), v.size(), 0);
+	const NTSTATUS rc = BCryptHashData(handle_,
+		const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(
+				data.data())), data.size(), 0);
 	checkNtStatus(rc, "BCryptHashData");
 }
 
