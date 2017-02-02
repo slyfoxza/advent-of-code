@@ -1,5 +1,5 @@
 CPPFLAGS += -DUSE_OPENSSL
-CXXFLAGS += -O2
+CXXFLAGS += -std=c++11 -O2
 LDFLAGS += -pthread
 LDADD += $(shell pkg-config --libs openssl)
 
