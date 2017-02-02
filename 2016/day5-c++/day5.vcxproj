@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ProjectConfiguration Include="Debug|x64" />
+    <ProjectConfiguration Include="Release|x64" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md5-cng.cpp" />
   </ItemGroup>
