@@ -35,7 +35,7 @@ fn main() {
     }
 }
 
-#[cfg(tests)]
+#[cfg(test)]
 mod tests {
     use super::{find_basement, find_floor};
 
