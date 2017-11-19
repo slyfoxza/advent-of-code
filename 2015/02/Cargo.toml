@@ -1,0 +1,7 @@
+[package]
+name = "aoc2015_02"
+version = "1.0.0"
+
+[[bin]]
+name = "aoc2015_02"
+path = "aoc2015_02.rs"
