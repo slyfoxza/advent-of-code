@@ -33,7 +33,7 @@ fn main() {
     println!("Paper: {}, ribbon: {}", paper, ribbon);
 }
 
-#[cfg(tests)]
+#[cfg(test)]
 mod test {
     use super::paper_and_ribbon_needed;
 
