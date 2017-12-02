@@ -1,6 +1,7 @@
 .PHONY: all clean
 
-all: rust
-clean: clean-rust
+all: java rust
+clean: clean-java clean-rust
 
+include ../java.mk
 include ../rust.mk
