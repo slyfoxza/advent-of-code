@@ -20,8 +20,12 @@ index of each digit in the string.
 # Rust
 [Even less fancy than the Python implementation.][rust]
 
+# Java
+An [entirely unnecessary usage][java] of the Java 9 module system.
+
 [1]: http://ruby-doc.org/core-2.4.2/String.html#method-i-scan
 [2]: http://ruby-doc.org/core-2.4.2/String.html#method-i-5B-5D
+[java]: https://github.com/slyfoxza/advent-of-code/blob/b8154b763095474dacfd2acadf9aca5c7f91bc76/2017/01/java-source/aoc/AdventOfCode.java
 [python]: https://github.com/slyfoxza/advent-of-code/blob/7d7b96135c981dc9526fc8d5c24180eb8d020042/2017/01/python.py#L5
 [ruby1]: https://github.com/slyfoxza/advent-of-code/blob/a5d27993fd3ba4602bd7478b68349e7f89ddb4dd/2017/01/test1.rb#L4
 [ruby2]: https://github.com/slyfoxza/advent-of-code/blob/094c5a21c2b56f0d4c1de95f5f2ce959c40ed411/2017/01/test1.rb
