@@ -17,8 +17,12 @@ Nothing too fancy. A [generator expression][python] takes care of converting
 digit characters to integer values, while `enumerate` is used to obtain the
 index of each digit in the string.
 
+# Rust
+[Even less fancy than the Python implementation.][rust]
+
 [1]: http://ruby-doc.org/core-2.4.2/String.html#method-i-scan
 [2]: http://ruby-doc.org/core-2.4.2/String.html#method-i-5B-5D
 [python]: https://github.com/slyfoxza/advent-of-code/blob/7d7b96135c981dc9526fc8d5c24180eb8d020042/2017/01/python.py#L5
 [ruby1]: https://github.com/slyfoxza/advent-of-code/blob/a5d27993fd3ba4602bd7478b68349e7f89ddb4dd/2017/01/test1.rb#L4
 [ruby2]: https://github.com/slyfoxza/advent-of-code/blob/094c5a21c2b56f0d4c1de95f5f2ce959c40ed411/2017/01/test1.rb
+[rust]: https://github.com/slyfoxza/advent-of-code/blob/a0cf1ef301a09fc3d9c14ef161a0455f35cbf95f/2017/01/rust.rs
