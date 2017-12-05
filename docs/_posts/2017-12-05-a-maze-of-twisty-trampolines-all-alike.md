@@ -32,6 +32,11 @@ improvement (again, abbreviated):
 While this is better, it's still pretty bad, but it seems that this is just the
 cost of doing business in Python.
 
+# Ruby
+My [Ruby solution][ruby] fares a bit better than Python (given the similar
+implementation) clocking in at just shy of 10 seconds; still pretty slow
+compared to Node.js.
+
 [1]: https://i.imgur.com/ASvCFmOh.jpg
 [cprofile]: https://docs.python.org/3/library/profile.html
 [helloserve]: https://github.com/helloserve/adventofcode/blob/master/2017/day5.js
@@ -41,3 +46,4 @@ cost of doing business in Python.
 [python1]: https://github.com/slyfoxza/advent-of-code/blob/c9dbe4e51261e8ed6a9502c54453f68928ad6f77/2017/05/python.py
 [python2]: https://github.com/slyfoxza/advent-of-code/blob/c9dbe4e51261e8ed6a9502c54453f68928ad6f77/2017/05/python.py#L17
 [python3]: https://github.com/slyfoxza/advent-of-code/blob/a19f317ab634e53135e96789e25f4ebef8136a31/2017/05/python.py
+[ruby]: https://github.com/slyfoxza/advent-of-code/blob/c8c6a615666b464e96a96d416d2070665024767e/2017/05/ruby.rb
