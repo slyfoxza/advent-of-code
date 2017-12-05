@@ -12,8 +12,8 @@ The Python solution runs… slowly; roughly 20 seconds on my laptop. When
 [Henk][helloserve] told me his Node.js solution ran in 600 ms, I was like
 ![¿que?][1]{:class='mfw'}
 
-Turns out, it's true! My [Node.js implementation] runs in roughly 320 ms, which
-means Python gets to be about 2 orders of magnitude slower.
+Turns out, it's true! My [Node.js implementation][nodejs] runs in roughly 320
+ms, which means Python gets to be about 2 orders of magnitude slower.
 
 Enter: [the `cProfile` module][cprofile]. Turns out, at least 2-3 seconds of
 the Python run time was being spent repeatedly calling `len` to evaluate the
