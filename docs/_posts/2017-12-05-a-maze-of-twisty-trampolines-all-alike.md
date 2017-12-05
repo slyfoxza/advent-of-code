@@ -44,8 +44,13 @@ interpreted/script languages, let's give the compiled binaries a crack at it.
 [Last year's darling][aoc2016], [Rust][rust], rises to the task, completing it
 in 90 milliseconds or so.
 
+# C
+Interestingly, the [C][c] solution is 10-20 ms slower than Rust. I suspect this
+may be due to the repeated calls to `scanf` when reading the input.
+
 [1]: https://i.imgur.com/ASvCFmOh.jpg
 [aoc2016]: https://github.com/slyfoxza/advent-of-code/tree/eccc9f9113f00fe3ab84ebf59f38df1685fef3db/2016
+[c]: https://github.com/slyfoxza/advent-of-code/6a45b4f02006cfddb319b33b38d61a1c966b9b92/2017/05/c.c
 [cprofile]: https://docs.python.org/3/library/profile.html
 [helloserve]: https://github.com/helloserve/adventofcode/blob/master/2017/day5.js
 [nodejs]: https://github.com/slyfoxza/advent-of-code/blob/2ff7ce14f116b93e9c2113ff170b1a65700653a6/2017/05/node.js
