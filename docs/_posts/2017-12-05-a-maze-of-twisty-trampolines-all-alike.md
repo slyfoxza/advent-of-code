@@ -37,7 +37,15 @@ My [Ruby solution][ruby] fares a bit better than Python (given the similar
 implementation) clocking in at just shy of 10 seconds; still pretty slow
 compared to Node.js.
 
+# Rust
+Now that we've got a decent spread in terms of representation from the
+interpreted/script languages, let's give the compiled binaries a crack at it.
+
+[Last year's darling][aoc2016], [Rust][rust], rises to the task, completing it
+in 90 milliseconds or so.
+
 [1]: https://i.imgur.com/ASvCFmOh.jpg
+[aoc2016]: https://github.com/slyfoxza/advent-of-code/tree/eccc9f9113f00fe3ab84ebf59f38df1685fef3db/2016
 [cprofile]: https://docs.python.org/3/library/profile.html
 [helloserve]: https://github.com/helloserve/adventofcode/blob/master/2017/day5.js
 [nodejs]: https://github.com/slyfoxza/advent-of-code/blob/2ff7ce14f116b93e9c2113ff170b1a65700653a6/2017/05/node.js
@@ -47,3 +55,4 @@ compared to Node.js.
 [python2]: https://github.com/slyfoxza/advent-of-code/blob/c9dbe4e51261e8ed6a9502c54453f68928ad6f77/2017/05/python.py#L17
 [python3]: https://github.com/slyfoxza/advent-of-code/blob/a19f317ab634e53135e96789e25f4ebef8136a31/2017/05/python.py
 [ruby]: https://github.com/slyfoxza/advent-of-code/blob/c8c6a615666b464e96a96d416d2070665024767e/2017/05/ruby.rb
+[rust]: https://github.com/slyfoxza/advent-of-code/blob/0bc2f610e3661dbebc100796a1fd14f73390849a/2017/05/rust.rs
