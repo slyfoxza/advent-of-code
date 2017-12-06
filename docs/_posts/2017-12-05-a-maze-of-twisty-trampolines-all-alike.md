@@ -1,6 +1,6 @@
 ---
 title: A Maze of Twisty Trampolines, All Alike
-date: 2017-12-05 00:58:05 -0200
+date: 2017-12-05 00:58:05 -0500
 ---
 # Python
 I [picked Python again][python1] because I could leverage [operator
