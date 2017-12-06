@@ -1,7 +1,8 @@
 .PHONY: all clean
 
-all: c rust
-clean: clean-c clean-rust
+all: c c++ rust
+clean: clean-c clean-c++ clean-rust
 
 include ../c.mk
+include ../c++.mk
 include ../rust.mk
