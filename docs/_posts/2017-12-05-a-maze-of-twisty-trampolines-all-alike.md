@@ -61,9 +61,20 @@ Well, would you [look at that][d]. I haven't written D code in probably years,
 and here it waltzes in and kicks C and C++ out the door, yielding times on par
 with Rust. Not bad!
 
+# Clojure
+[This is the first time I've written Clojure][clojure]. It's probably the most
+involved Lisp-like code I've written outside of a GIMP automation script and
+Emacs configuration files while I was going through _that_ phase.
+
+It's very slow, even ignoring the startup cost for Clojure itself; roughly 17
+seconds run time. This is probably an artifact of running/compiling it
+on-demand, rather than building it to compiled JVM bytecode, and letting
+HotSpot make things go fast.
+
 [1]: https://i.imgur.com/ASvCFmOh.jpg
 [aoc2016]: https://github.com/slyfoxza/advent-of-code/tree/eccc9f9113f00fe3ab84ebf59f38df1685fef3db/2016
 [c]: https://github.com/slyfoxza/advent-of-code/blob/6a45b4f02006cfddb319b33b38d61a1c966b9b92/2017/05/c.c
+[clojure]: https://github.com/slyfoxza/advent-of-code/blob/084c291b42b58f05572850a9f409f481ddfe1303/2017/05/clojure.clj
 [cpp]: https://github.com/slyfoxza/advent-of-code/blob/0c29fffbfafcf70ef36cf6dc0dd833f8bd43c5cb/2017/05/c%2B%2B.c%2B%2B
 [cprofile]: https://docs.python.org/3/library/profile.html
 [d]: https://github.com/slyfoxza/advent-of-code/blob/81877da0f2ebfe532fe4e2450c1f7d9637b25bd0/2017/05/d.d
