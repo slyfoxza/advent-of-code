@@ -1,0 +1,4 @@
+= Advent of Code: Base v1
+
+Contains makefile snippets for use in Advent of Code repositories when dealing
+with compiled languages.
