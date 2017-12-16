@@ -1,3 +1,3 @@
-.PHONY: all clean $(CLEAN_C) $(CLEAN_CPP) $(CLEAN_D) $(CLEAN_RUST)
+.PHONY: all clean $(CLEAN_C) $(CLEAN_CPP) $(CLEAN_D) $(CLEAN_JAVA) $(CLEAN_RUST)
 
-clean: $(CLEAN_C) $(CLEAN_CPP) $(CLEAN_D) $(CLEAN_RUST)
+clean: $(CLEAN_C) $(CLEAN_CPP) $(CLEAN_D) $(CLEAN_JAVA) $(CLEAN_RUST)
