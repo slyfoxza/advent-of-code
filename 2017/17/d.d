@@ -10,8 +10,17 @@ void main() {
 	uint i = 0;
 	for(int n = 1; n <= 2017; ++n) {
 		i = (i + skip) % ring.length;
-		ring.insertInPlace(i + 1, n);
-		i = i + 1;
+		ring.insertInPlace(i++, n);
 	}
-	writeln(ring[i + 1]);
+	writef("%d ", ring[i]);
+
+	i = 0;
+	int r1 = -1;
+	for(int n = 1; n <= 50_000_000; ++n) {
+		i = (i + skip) % n;
+		if(i++ == 0) {
+			r1 = n;
+		}
+	}
+	writeln(r1);
 }
