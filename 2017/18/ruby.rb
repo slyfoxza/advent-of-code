@@ -1,43 +1,58 @@
 #!/usr/bin/env ruby
-last_freq = nil
-regs = {}
-regs.default = 0
 program = $stdin.each_line.map { |x| x.split }
-i = 0
-recover = nil
-until i < 0 || i >= program.length
-  ins, x, y = program[i]
-  unless y.nil?
-    y = regs[y.to_sym] if y =~ /[a-z]/
-    y = y.to_i
-  end
-  #puts "#{ins} #{x} #{y}"
 
-  case ins
-  when 'snd'
-    x = regs[x.to_sym] if x =~ /[a-z]/
-    last_freq = x.to_i
-  when 'rcv'
-    x = regs[x.to_sym] if x =~ /[a-z]/
-    if x.to_i != 0
-      was_nil = recover == nil
-      recover = last_freq
-      if was_nil
-        puts recover
-        exit
-      end
-    end
-  when 'set'; regs[x.to_sym] = y
-  when 'add'; regs[x.to_sym] += y
-  when 'mul'; regs[x.to_sym] *= y
-  when 'mod'; regs[x.to_sym] %= y
-  when 'jgz'
-    x = regs[x.to_sym] if x =~ /[a-z]/
-    if x.to_i > 0
-      i += y
+last_freq = nil
+recover = nil
+ip = [0, 0]
+regs = [Hash.new(0), Hash.new(0)]
+(0..1).each { |p| regs[p][:p] = p }
+queue = [[], []]
+n_send = 0
+until ip.all? { |x| x < 0 || x >= program.length }
+  blocked = [false, false]
+  (0..1).each do |p|
+    if ip[p] < 0 || ip[p] >= program.length
+      blocked[p] = true
       next
     end
-  end
 
-  i += 1
+    ins, x, y = program[ip[p]]
+    unless y.nil?
+      y = regs[p][y.to_sym] if y =~ /[a-z]/
+      y = y.to_i
+    end
+
+    case ins
+    when 'snd'
+      x = regs[p][x.to_sym] if x =~ /[a-z]/
+      last_freq = x.to_i if p == 0
+      queue[p ^ 1] << x
+      n_send += 1 if p == 1
+    when 'rcv'
+      if recover.nil? && p == 0
+        xv = regs[p][x.to_sym] if x =~ /[a-z]/
+        recover = last_freq if xv.to_i != 0
+      end
+      if queue[p].empty?
+        blocked[p] = true
+        next
+      else
+        regs[p][x.to_sym] = queue[p].delete_at 0
+      end
+    when 'set'; regs[p][x.to_sym] = y
+    when 'add'; regs[p][x.to_sym] += y
+    when 'mul'; regs[p][x.to_sym] *= y
+    when 'mod'; regs[p][x.to_sym] %= y
+    when 'jgz'
+      x = regs[p][x.to_sym] if x=~ /[a-z]/
+      if x.to_i > 0
+        ip[p] += y
+        next
+      end
+    end
+    ip[p] += 1
+  end
+  break if blocked.all?
 end
+
+puts "#{recover} #{n_send}"
