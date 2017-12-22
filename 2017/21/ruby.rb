@@ -36,7 +36,7 @@ $stdin.each_line
   end
 size = 3
 image = '.#...####'
-5.times do
+18.times do |n|
   q, r = size.divmod 2
   if r == 0
     rule = twos
@@ -59,5 +59,6 @@ image = '.#...####'
   end
   image = new_image.join ''
   size += q
+  $stdout.print "#{image.count '#'} " if n.next == 5
 end
 puts image.count '#'
