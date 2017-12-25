@@ -2,14 +2,17 @@ import std.array;
 import std.algorithm;
 import std.conv;
 import std.stdio;
+import std.typecons;
 
-int findBridge(T)(int cumStrength, int nextPort, T components) {
-	int subStrength = cumStrength + nextPort;
+alias Strlength = Tuple!(int, "strength", int, "length");
+
+Strlength findBridge(T)(T components, bool function(Strlength, Strlength) pred, int length = 0, int cumStrength = 0, int nextPort = 0) {
+	auto subStrength = Strlength(cumStrength + nextPort, length);
 	foreach(i, comp; components) {
 		foreach(j; 0 .. 2) {
 			if(comp[j] == nextPort) {
-				int compStrength = findBridge(cumStrength + nextPort * 2, comp[j ^ 1], array(components).remove(i));
-				if(compStrength > subStrength) {
+				auto compStrength = findBridge(array(components).remove(i), pred, length + 1, cumStrength + nextPort * 2, comp[j ^ 1]);
+				if(pred(compStrength, subStrength)) {
 					subStrength = compStrength;
 				}
 			}
@@ -20,6 +23,11 @@ int findBridge(T)(int cumStrength, int nextPort, T components) {
 
 void main() {
 	auto components = stdin.byLine()
-		.map!(a => a.split('/').map!(to!int).array.sort().array);
-	writeln(findBridge(0, 0, array(components)));
+		.map!(a => a.split('/').map!(to!int).array.sort().array)
+		.array;
+	writeln(
+		findBridge(components, (a, b) => a.strength > b.strength).strength,
+		' ',
+		findBridge(components, (a, b) => a.length >= b.length && a.strength > b.strength).strength
+	);
 }
