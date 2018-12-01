@@ -1,0 +1,105 @@
+@code_type c .c
+@comment_type /* %s */
+@compiler lit c.lit && gcc -o /dev/null c.c
+@title Day 1, 2015: Not Quite Lisp
+
+@s Introduction
+
+[Not Quite Lisp](https://adventofcode.com/2015/day/1) is the opening puzzle for the 2015 Advent of Code.
+The input to the puzzle is a sequence of parenthesis characters, which are to be interpreted as an instruction to increment or decrement a counter for `(` and `)`, respectively.
+
+The puzzle description states that "[Santa] starts on the ground floor (floor 0)", which gives us the starting configuration for the aforementioned counter:
+
+--- Declare state variables
+int counter = 0;
+---
+
+Note that the data type is a signed integer, since the value may become negative; for example, with an input `))(`.
+
+The program will expect to receive the input sequence via its standard input, which makes reading the input one character at a time fairly trivial:
+
+--- Read and interpret the input
+int c;
+while((c = getchar()) != EOF) {
+	@{Interpret the input sequence}
+}
+---
+
+@s Interpreting the input sequence
+
+Assuming we read each character in the input sequence one by one into a character variable `c`, the most obvious initial way of interpreting the sequence is using a conditional ssignment:
+
+--- Interpret the input sequence
+if(c == '(')
+	++counter;
+else if(c == ')')
+	--counter;
+---
+
+which can be written more concisely using a ternary operator (albeit with the assumption that the input sequence will only ever contain the two parenthesis characters):
+
+--- Interpret the input sequence --- :=
+counter += (c == '(') ? 1 : -1;
+---
+
+To delve even deeper into the Pit of Micro-Optimizations, we can abuse the layout of the ASCII encoding, which has `(` and `)` at code points 40 and 41 (decimal), respectively.
+Since characters in C are just integers corresponding to the code point, we can use arithmetic to transform the range $[40, 41]$ to $[0, 1]$ by subtracting 40, or `'('`, from `c`.
+Since an opening parenthesis should result in the counter being incremented, we need to "reverse" the range, which is achieved by multiplying by -1.
+However, following this, the current values in the range are still 0 and -1.
+Thus, the range is "stretched" by multiplying it by 2, yielding possible values 0 and -2.
+The last thing to do is to simply add 1, resulting in the desired possible values of 1 and -1 for `(` and `)`, respectively.
+
+This entire process may be expressed as:
+
+--- Interpret the input sequence --- :=
+counter += (c - '(') * -2 + 1;
+---
+
+The advantage this implementation has is that, using GCC 8.2.0/x86-64, the resulting code has no conditional jump, improving performance due to excluding the possibility of a branch misprediction by the processor.
+
+@s
+
+When the full sequence has been interpreted, the final value must be output to answer the first part of the puzzle:
+
+--- Output the solution
+printf("%d\n", counter);
+---
+
+@s Finding the index of the character that first causes the counter to become negative
+
+The second part of the puzzle is to determine the index of the character that first causes the value of `counter` to drop below zero.
+To keep track of which index we're at, we introduce a new state variable, `index`, as well as a boolean to determine whether the final value of `index` has been found:
+
+--- Declare state variables --- +=
+int index = 0;
+char found_negative = 0;
+---
+
+In each iteration of the read loop where `found_negative` is still zero, `index` must be incremented, and the value of the counter must be inspected.
+If it is negative, the `found_negative` flag is set, effectively "freezing" the value of `index`.
+
+--- Interpret the input sequence --- +=
+if(!found_negative) {
+	++index;
+	if(counter < 0) found_negative = 1;
+}
+---
+
+@s
+
+--- Output the solution --- :=
+printf("%d %d\n", counter, index);
+---
+
+@s Putting the program together
+
+--- c.c
+#include <stdio.h>
+
+int main() {
+	@{Declare state variables}
+	@{Read and interpret the input}
+	@{Output the solution}
+	return 0;
+}
+---
