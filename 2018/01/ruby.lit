@@ -1,0 +1,43 @@
+@code_type ruby .rb
+@comment_type # %s
+@title Day 1, 2018: Chronal Calibration
+
+@s Introduction
+
+[Chronal Calibration](https://adventofcode.com/2018/day/1) is the opening puzzle for the 2018 Advent of Code.
+The input is a series of delta values, such as `+1` and `-2`, to be applied to an initial value of zero to obtain the final cumulative value.
+
+@s
+
+In essence, we wish to add each value in sequence using arithmetic addition, which sounds a bit like a [fold](https://en.wikipedia.org/wiki/Fold_(higher-order_function)):
+
+--- Fold input value list
+total = values.reduce(:+)
+---
+
+To construct the `values` list, we obtain an enumerator over each line in the input:
+
+--- Read and interpret the input
+values = ARGF.each_line
+---
+
+However, this would result in a list of strings, which have a [different behaviour defined for the addition operator](http://ruby-doc.org/core-2.5.0/String.html#method-i-2B) than what we want.
+Since each input value can be interpreted as an integer value, we'll do exactly that:
+
+--- Read and interpret the input --- +=
+  .map(&:to_i)
+---
+
+@s
+
+--- Output the solution
+puts total
+---
+
+@s
+
+--- ruby.rb
+@{Read and interpret the input}
+@{Fold input value list}
+@{Output the solution}
+---
