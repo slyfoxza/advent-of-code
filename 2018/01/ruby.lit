@@ -7,7 +7,7 @@
 [Chronal Calibration](https://adventofcode.com/2018/day/1) is the opening puzzle for the 2018 Advent of Code.
 The input is a series of delta values, such as `+1` and `-2`, to be applied to an initial value of zero to obtain the final cumulative value.
 
-@s
+@s Folding the input value list
 
 In essence, we wish to add each value in sequence using arithmetic addition, which sounds a bit like a [fold](https://en.wikipedia.org/wiki/Fold_(higher-order_function)):
 
@@ -39,5 +39,51 @@ puts total
 --- ruby.rb
 @{Read and interpret the input}
 @{Fold input value list}
+@{Output the solution}
+---
+
+@s Finding the first repeated sum
+
+The second part of the puzzle cycles through the input list infinitely, repeating the folding operation until the result is one that has been seen before.
+We'll handle this with a `seen` [set](http://ruby-doc.org/stdlib-2.5.0/libdoc/set/rdoc/Set.html), and checking an intermediate result for presence in it:
+
+--- Test for repeated frequency
+repeated = frequency if seen.include?(frequency)
+---
+
+Now, we need to cycle infinitely through the values list, which is made easy by the [`Enumerable#cycle` method](http://ruby-doc.org/core-2.5.0/Enumerable.html#method-i-cycle).
+We will again make use of `reduce`, albeit in its block form, which allows the block to break when the repetition criteria is fulfilled, and return the repeated value:
+
+--- Cycle until repeated sum is found
+seen = Set.new
+repeated = values.cycle.reduce(0) do |frequency, value|
+  @{Test for repeated frequency}
+end
+---
+
+Now that the repetition test will be executing in a `reduce` block, it needs to change slightly.
+Specifically, we need to break out of the loop (with the repeated value) when it is detected that the value already exists in the set.
+This is done using the [`add?` method](http://ruby-doc.org/stdlib-2.5.0/libdoc/set/rdoc/Set.html#method-i-add-3F), which will return a "falsey" value if the value already exists in the set:
+
+--- Test for repeated frequency --- :=
+frequency += value
+break frequency unless seen.add?(frequency)
+frequency
+---
+
+@s
+
+--- Output the solution --- :=
+puts total, repeated
+---
+
+@s
+
+--- ruby.rb --- :=
+require 'set'
+
+@{Read and interpret the input}
+@{Fold input value list}
+@{Cycle until repeated sum is found}
 @{Output the solution}
 ---
