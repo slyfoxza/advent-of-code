@@ -1,7 +1,0 @@
-[package]
-name = "aoc2015_01"
-version = "1.0.0"
-
-[[bin]]
-name = "aoc2015_01"
-path = "aoc2015_01.rs"

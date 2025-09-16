@@ -1,7 +1,0 @@
-[package]
-name = "day14"
-version = "1.0.0"
-
-[dependencies]
-regex = "0.1"
-rust-crypto = "0.2.36"
