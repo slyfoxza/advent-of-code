@@ -1,9 +1,0 @@
-#!/bin/sh
-set -e
-if [ -z $1 ]; then echo 'Usage: day <number>'; exit 1; fi
-if [ -d day$1 ]; then
-    cd day$1&&cargo test&&cargo run --release<../day$1.txt
-else
-    rustc --cfg tests --test -o test-day$1 day$1.rs&&./test-day$1\
-	&&rustc -O day$1.rs&&./day$1<day$1.txt
-fi

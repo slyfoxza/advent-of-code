@@ -1,7 +1,0 @@
-[package]
-name = "2017.05"
-version = "1.0.0"
-
-[[bin]]
-name = "rust"
-path = "rust.rs"

@@ -1,7 +1,0 @@
-.PHONY: all clean clean-d
-
-all: d
-
-clean: clean-d
-
-include ../d.mk
