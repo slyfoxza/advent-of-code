@@ -13,13 +13,13 @@
  * not, see <https://www.gnu.org/licenses/>. */
 use std::ffi::c_char;
 use std::fs::File;
-use std::io::{self, Read};
+use std::io::{self, BufReader, Read};
 
 fn solve() -> io::Result<(i32, i32)> {
     let mut floor = 0;
     let mut position = -1;
     let mut i = 0;
-    for c in File::open("y2015/d01/input")?.bytes() {
+    for c in BufReader::new(File::open("y2015/d01/input")?).bytes() {
         match c? {
             b'(' => floor += 1,
             b')' => floor -= 1,
