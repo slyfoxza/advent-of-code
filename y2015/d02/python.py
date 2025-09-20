@@ -10,22 +10,16 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along with this repository. If
-# not, see <https://www.gnu.org/licenses/>. 
-project(
-  'advent-of-code',
-  'c', 'cpp', 'd', 'rust',
-  default_options : {
-    'buildtype': 'debugoptimized',
-    'rust_std': '2024',
-  },
-  meson_version : '>=1.3.0'
-)
-rust_lib = static_library('advent-of-rust', 'aoc_rs.rs', rust_abi : 'c')
-executable(
-  'advent-of-code',
-  'main.d', 'aoc.d', 'python.c', 'registry.d',
-  'y2015/d01/d.d', 'y2015/d01/c.c', 'y2015/d01/cpp.cpp',
-  'y2015/d02/d.d', 'y2015/d02/c.c', 'y2015/d02/cpp.cpp',
-  dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
-  link_with : rust_lib
-)
+# not, see <https://www.gnu.org/licenses/>.
+def python_y2015_d02():
+    paper = ribbon = 0
+    with open("y2015/d02/input") as f:
+        while len(line := f.readline()) != 0:
+            w, h, l = map(int, line.split("x", 2))
+            lw, wh, hl = l * w, w * h, h * l
+            paper += 2 * (lw + wh + hl) + min(lw, wh, hl)
+            ribbon += 2 * (l + w + h - max(l, w, h)) + l * w * h
+    return (paper, ribbon)
+
+if __name__ == "__main__":
+    print(*python_y2015_d02())
