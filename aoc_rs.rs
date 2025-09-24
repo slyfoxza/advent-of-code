@@ -15,6 +15,7 @@ use std::ffi::{CString, c_char};
 
 #[path = "y2015/d01/rust.rs"] mod y2015_d01;
 #[path = "y2015/d02/rust.rs"] mod y2015_d02;
+#[path = "y2015/d03/rust.rs"] mod y2015_d03;
 
 /// Converts a pair of integer answers to strings, and copies them into the C buffers.
 pub fn copy_int_answers<E: std::fmt::Debug>(
