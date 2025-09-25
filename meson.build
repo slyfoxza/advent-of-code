@@ -28,6 +28,7 @@ executable(
   'y2015/d02/d.d', 'y2015/d02/c.c', 'y2015/d02/cpp.cpp',
   'y2015/d03/d.d', 'y2015/d03/c.c', 'y2015/d03/cpp.cpp',
   'y2015/d04/d.d',
+  'y2015/d05/d.d', 'y2015/d05/c.c',
   dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
   link_with : rust_lib
 )
