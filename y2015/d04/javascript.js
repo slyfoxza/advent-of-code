@@ -11,43 +11,25 @@
  *
  * You should have received a copy of the GNU General Public License along with this repository. If
  * not, see <https://www.gnu.org/licenses/>. */
-module y2015_d01;
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 
-import std.conv;
-import std.stdio;
+const fileContents = await readFile('y2015/d04/input', { encoding: 'utf8' });
+const secretKey = fileContents.trimEnd();
 
-import aoc;
-import registry;
-
-mixin CExtern!"c_y2015_d01";
-mixin CppExtern!"cpp_y2015_d01";
-mixin CExtern!"rust_y2015_d01";
-
-shared static this() {
-	register(2015, 1,
-			new CSolution(&c_y2015_d01),
-			new CppSolution(&cpp_y2015_d01),
-			new DSolution(&d_y2015_d01),
-			new RustSolution(&rust_y2015_d01),
-	);
-}
-
-Answers d_y2015_d01() {
-	int floor, position = -1;
-	uint i;
-	foreach (buffer; File("y2015/d01/input").byChunk(4096)) {
-		foreach (c; buffer) {
-			if (c == '(') {
-				floor++;
-			} else if (c == ')') {
-				floor--;
-			}
-
-			if (i++ && position == -1 && floor < 0) {
-				position = i;
-			}
+let part1 = 0;
+for (let i = 1; ; i++) {
+	const md5 = createHash('md5');
+	md5.update(secretKey);
+	md5.update(i.toString());
+	const hash = md5.digest();
+	if (hash[0] == 0 && hash[1] == 0) {
+		if (part1 == 0 && (hash[2] & 0xF0) == 0) {
+			part1 = i;
+		}
+		if (hash[2] == 0) {
+			console.log(part1, i);
+			break;
 		}
 	}
-
-	return Answers(floor.to!string, position.to!string);
 }

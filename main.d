@@ -16,16 +16,32 @@ import std.array : split;
 import std.conv : parse;
 import std.datetime.stopwatch : StopWatch;
 import std.format : format;
+import std.getopt : defaultGetoptPrinter, getopt;
 import std.range : enumerate;
 import std.stdio : File, write;
 import std.typecons : Nullable, tuple;
 
 import aoc : Answers;
-import registry : getSolutions, registerForkInterpreterSolutions,
+import registry : getSolutions, isSlow, registerForkInterpreterSolutions,
 	   registerInProcInterpreterSolutions;
 
-void main() {
+void main(string[] args) {
+	bool slow = false;
+
+	auto helpInformation = getopt(
+		args,
+		"slow", &slow,
+	);
+	if (helpInformation.helpWanted) {
+		defaultGetoptPrinter("Advent of Code", helpInformation.options);
+		return;
+	}
+
 	foreach(year, day, expected; readAnswers()) {
+		if (!slow && isSlow(year, day)) {
+			continue;
+		}
+
 		write(format("%d-%02d", year, day));
 		auto stopWatch = StopWatch();
 		bool ranSolution = false;

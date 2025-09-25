@@ -24,7 +24,7 @@ mixin CExtern!"c_y2015_d03";
 mixin CppExtern!"cpp_y2015_d03";
 mixin CExtern!"rust_y2015_d03";
 
-static this() {
+shared static this() {
 	register(2015, 3,
 			new CSolution(&c_y2015_d03),
 			new CppSolution(&cpp_y2015_d03),

@@ -10,24 +10,22 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along with this repository. If
-# not, see <https://www.gnu.org/licenses/>. 
-project(
-  'advent-of-code',
-  'c', 'cpp', 'd', 'rust',
-  default_options : {
-    'buildtype': 'debugoptimized',
-    'rust_std': '2024',
-  },
-  meson_version : '>=1.3.0'
-)
-rust_lib = static_library('advent-of-rust', 'aoc_rs.rs', rust_abi : 'c')
-executable(
-  'advent-of-code',
-  'main.d', 'aoc.d', 'python.c', 'registry.d',
-  'y2015/d01/d.d', 'y2015/d01/c.c', 'y2015/d01/cpp.cpp',
-  'y2015/d02/d.d', 'y2015/d02/c.c', 'y2015/d02/cpp.cpp',
-  'y2015/d03/d.d', 'y2015/d03/c.c', 'y2015/d03/cpp.cpp',
-  'y2015/d04/d.d',
-  dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
-  link_with : rust_lib
-)
+# not, see <https://www.gnu.org/licenses/>.
+require 'digest'
+
+secret_key = File.read('y2015/d04/input').strip
+part1 = 0
+i = 1
+loop do
+  hash = Digest::MD5.digest("#{secret_key}#{i}").bytes
+  if hash[0] == 0 && hash[1] == 0
+    if part1 == 0 && (hash[2] & 0xF0) == 0
+      part1 = i
+    end
+    if hash[2] == 0
+      puts "#{part1} #{i}"
+      break
+    end
+  end
+  i += 1
+end
