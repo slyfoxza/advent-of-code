@@ -11,6 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this repository. If
  * not, see <https://www.gnu.org/licenses/>. */
+import std.algorithm : canFind;
 import std.conv : to;
 import std.datetime.stopwatch : StopWatch;
 import std.file : exists, getcwd, isFile;
@@ -27,6 +28,14 @@ import python;
 
 private alias YearDay = Tuple!(ushort, "year", ubyte, "day");
 private Solution[][YearDay] registry;
+
+immutable SlowYearDays = [
+	YearDay(2015, 4),
+];
+
+bool isSlow(ushort year, ubyte day) {
+	return SlowYearDays.canFind(YearDay(year, day));
+}
 
 void register(ushort year, ubyte day, Solution[] solutions...) {
 	immutable yearDay = YearDay(year, day);
@@ -125,7 +134,7 @@ private class BufPassSolution(string Linkage, string Name) : Solution {
 	mixin("alias Function = extern (" ~ Linkage ~ ") void function(char*, char*, size_t);");
 	private Function func;
 
-	static this()
+	shared static this()
 	out(; buffer1 != null && buffer2 != null, "buffer allocation failure")
 	{
 		buffer1 = cast(char*) malloc(64);
@@ -149,7 +158,7 @@ private class BufPassSolution(string Linkage, string Name) : Solution {
 		return Answers(buffer1.fromStringz.idup, buffer2.fromStringz.idup);
 	}
 
-	static ~this() {
+	shared static ~this() {
 		free(buffer1);
 		free(buffer2);
 	}
@@ -222,7 +231,7 @@ class LuaSolution : Solution {
 
 	private string filename;
 
-	static this() {
+	shared static this() {
 		lua = luaL_newstate();
 		luaL_openlibs(lua);
 	}
@@ -269,7 +278,7 @@ class LuaSolution : Solution {
 		}
 	}
 
-	static ~this() {
+	shared static ~this() {
 		if (lua != null) {
 			lua_close(lua);
 		}
@@ -280,7 +289,7 @@ class PythonSolution : Solution {
 	private string funcName;
 	private string modulePath;
 
-	static this() {
+	shared static this() {
 		auto pyConfig = aoc_alloc_pyconfig();
 		PyConfig_InitIsolatedConfig(pyConfig);
 		Py_InitializeFromConfig(pyConfig);
@@ -359,7 +368,7 @@ class PythonSolution : Solution {
 		}
 	}
 
-	static ~this() {
+	shared static ~this() {
 		Py_Finalize();
 	}
 }

@@ -11,39 +11,34 @@
  *
  * You should have received a copy of the GNU General Public License along with this repository. If
  * not, see <https://www.gnu.org/licenses/>. */
-module y2015_d02;
+module y2015_d04;
 
-import std.algorithm;
 import std.conv;
-import std.format;
+import std.digest.md;
 import std.stdio;
+import std.string;
 
 import aoc;
 import registry;
 
-mixin CExtern!"c_y2015_d02";
-mixin CppExtern!"cpp_y2015_d02";
-mixin CExtern!"rust_y2015_d02";
-
 shared static this() {
-	register(2015, 2,
-			new CSolution(&c_y2015_d02),
-			new CppSolution(&cpp_y2015_d02),
-			new DSolution(&d_y2015_d02),
-			new RustSolution(&rust_y2015_d02),
+	register(2015, 4,
+			new DSolution(&d_y2015_d04),
 	);
 }
 
-Answers d_y2015_d02() {
-	uint paper, ribbon;
-	foreach (line; File("y2015/d02/input").byLine) {
-		uint l, w, h;
-		line.formattedRead("%dx%dx%d", l, w, h);
-
-		auto lw = l * w, wh = w * h, hl = h * l;
-		paper += 2 * (lw + wh + hl) + min(lw, wh, hl);
-		ribbon += 2 * (l + w + h - max(l, w, h)) + l * w * h;
+Answers d_y2015_d04() {
+	uint part1 = 0, part2 = 0;
+	auto secretKey = File("y2015/d04/input").readln().stripRight;
+	for (uint i = 1; part2 == 0 || part1 == 0; i++) {
+		auto hash = md5Of(secretKey ~ i.to!string);
+		if (part1 == 0 && hash[0] == 0 && hash[1] == 0 && (hash[2] & 0xF0) == 0) {
+			part1 = i;
+		}
+		if (part2 == 0 && hash[0] == 0 && hash[1] == 0 && hash[2] == 0) {
+			part2 = i;
+		}
 	}
 
-	return Answers(paper.to!string, ribbon.to!string);
+	return Answers(part1.to!string, part2.to!string);
 }

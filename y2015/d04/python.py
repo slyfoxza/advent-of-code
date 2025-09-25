@@ -10,24 +10,29 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along with this repository. If
-# not, see <https://www.gnu.org/licenses/>. 
-project(
-  'advent-of-code',
-  'c', 'cpp', 'd', 'rust',
-  default_options : {
-    'buildtype': 'debugoptimized',
-    'rust_std': '2024',
-  },
-  meson_version : '>=1.3.0'
-)
-rust_lib = static_library('advent-of-rust', 'aoc_rs.rs', rust_abi : 'c')
-executable(
-  'advent-of-code',
-  'main.d', 'aoc.d', 'python.c', 'registry.d',
-  'y2015/d01/d.d', 'y2015/d01/c.c', 'y2015/d01/cpp.cpp',
-  'y2015/d02/d.d', 'y2015/d02/c.c', 'y2015/d02/cpp.cpp',
-  'y2015/d03/d.d', 'y2015/d03/c.c', 'y2015/d03/cpp.cpp',
-  'y2015/d04/d.d',
-  dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
-  link_with : rust_lib
-)
+# not, see <https://www.gnu.org/licenses/>.
+from hashlib import md5
+
+def python_y2015_d04():
+    part1 = 0
+
+    with open("y2015/d04/input", "rb") as f:
+        secret_key = f.read().rstrip()
+
+    i = 1
+    while True:
+        h = md5()
+        h.update(secret_key)
+        h.update(str(i).encode())
+        h = h.digest()
+
+        if h.startswith(b"\x00\x00"):
+            if part1 == 0 and h[2] & 0xF0 == 0:
+                part1 = i
+            elif h[2] == 0:
+                return (part1, i)
+
+        i += 1
+
+if __name__ == "__main__":
+    print(*python_y2015_d04())
