@@ -23,7 +23,7 @@ import std.typecons : Nullable, tuple;
 
 import aoc : Answers;
 import registry : getSolutions, isSlow, registerForkInterpreterSolutions,
-	   registerInProcInterpreterSolutions;
+	   registerInProcInterpreterSolutions, registerJvmSolutions;
 
 void main(string[] args) {
 	bool slow = false;
@@ -46,6 +46,7 @@ void main(string[] args) {
 		auto stopWatch = StopWatch();
 		bool ranSolution = false;
 
+		registerJvmSolutions(year, day);
 		registerInProcInterpreterSolutions(year, day);
 		registerForkInterpreterSolutions(year, day);
 
