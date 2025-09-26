@@ -14,15 +14,18 @@
 import std.algorithm : canFind;
 import std.conv : to;
 import std.datetime.stopwatch : StopWatch;
-import std.file : exists, getcwd, isFile;
+import std.file : exists, getcwd, isFile, read;
 import std.format : format;
 import std.process : execute;
 import std.string : fromStringz, indexOf, stripRight, toStringz;
 import std.typecons : Tuple, tuple;
+import std.zip : ZipArchive;
 import core.stdc.stdlib : free, malloc;
+import core.sys.posix.dlfcn : RTLD_LAZY, dlopen, dlsym;
 
 import aoc : Answers;
 import guile;
+import java;
 import lua;
 import python;
 
@@ -41,6 +44,20 @@ void register(ushort year, ubyte day, Solution[] solutions...) {
 	immutable yearDay = YearDay(year, day);
 	registry.require(yearDay, []);
 	registry[yearDay] ~= solutions;
+}
+
+immutable JvmJarPath = "builddir/gradle/libs/advent-of-code.jar";
+void registerJvmSolutions(ushort year, ubyte day) {
+	immutable yearDay = YearDay(year, day);
+	registry.require(yearDay, []);
+
+	immutable needle = format("aoc/solutions/JavaY%dD%02d.class", year, day);
+	foreach (name, zipMember; new ZipArchive(read(JvmJarPath)).directory) {
+		if (name == needle) {
+			registry[yearDay] ~= new JavaSolution(year, day);
+			break;
+		}
+	}
 }
 
 void registerInProcInterpreterSolutions(ushort year, ubyte day) {
@@ -176,7 +193,6 @@ mixin template CppExtern(string Symbol) {
 
 alias RustSolution = BufPassSolution!("C", "Rust");
 
-import std.stdio : stderr;
 class GuileSolution : Solution {
 	private string filename;
 
@@ -370,6 +386,72 @@ class PythonSolution : Solution {
 
 	shared static ~this() {
 		Py_Finalize();
+	}
+}
+
+class JavaSolution : Solution {
+	private static JNIEnv* jni;
+	private static JavaVM* jvm;
+
+	private static jmethodID solveMethodId;
+	private static jmethodID answerPart1MethodId, answerPart2MethodId;
+
+	shared static this() {
+		auto libJava = dlopen("/usr/lib/jvm/jre-25/lib/server/libjvm.so", RTLD_LAZY);
+		auto JNI_GetDefaultJavaVMInitArgs = cast(jint function(void*)) libJava.dlsym("JNI_GetDefaultJavaVMInitArgs");
+		JavaVMInitArgs jvmInitArgs;
+		jvmInitArgs.jniVersion = 0x00180000; // JNI_VERSION_24
+		jvmInitArgs.nOptions = 1;
+		immutable classPathArg = "-Djava.class.path=" ~ JvmJarPath;
+		JavaVMOption[] jvmOptions = [{classPathArg.toStringz}];
+		jvmInitArgs.options = &jvmOptions[0];
+
+		auto JNI_CreateJavaVM = cast(jint function(JavaVM**, JNIEnv**, void*)) libJava.dlsym("JNI_CreateJavaVM");
+		if (auto result = JNI_CreateJavaVM(&jvm, &jni, &jvmInitArgs) != JNI_OK) {
+			throw new Exception(format("JNI_CreateJavaVM: %d", result));
+		}
+
+		auto solutionInterface = jni.functions.FindClass(jni, "aoc/AdventOfCode$Solution");
+		solveMethodId = jni.functions.GetMethodID(jni, solutionInterface, "solve", "()Laoc/AdventOfCode$Answers;");
+
+		auto answersClass = jni.functions.FindClass(jni, "aoc/AdventOfCode$Answers");
+		answerPart1MethodId = jni.functions.GetMethodID(jni, answersClass, "part1", "()Ljava/lang/String;");
+		answerPart2MethodId = jni.functions.GetMethodID(jni, answersClass, "part2", "()Ljava/lang/String;");
+	}
+
+	private string javaClassFqname;
+
+	this(ushort year, ubyte day) {
+		super("Java");
+		javaClassFqname = format("aoc/solutions/JavaY%dD%02d", year, day);
+	}
+
+	override Answers run(ref StopWatch sw) {
+		auto javaClass = jni.functions.FindClass(jni, javaClassFqname.toStringz);
+		auto javaCtor = jni.functions.GetMethodID(jni, javaClass, "<init>", "()V");
+		auto javaObject = jni.functions.NewObject(jni, javaClass, javaCtor);
+
+		sw.restart();
+		auto javaResult = jni.functions.CallObjectMethod(jni, javaObject, solveMethodId);
+		sw.stop();
+
+		Answers answers;
+
+		auto javaString = jni.functions.CallObjectMethod(jni, javaResult, answerPart1MethodId);
+		auto utfChars = jni.functions.GetStringUTFChars(jni, javaString, null);
+		answers.part1 = utfChars.fromStringz.idup;
+		jni.functions.ReleaseStringUTFChars(jni, javaString, utfChars);
+
+		javaString = jni.functions.CallObjectMethod(jni, javaResult, answerPart2MethodId);
+		utfChars = jni.functions.GetStringUTFChars(jni, javaString, null);
+		answers.part2 = utfChars.fromStringz.idup;
+		jni.functions.ReleaseStringUTFChars(jni, javaString, utfChars);
+
+		return answers;
+	}
+
+	shared static ~this() {
+		jvm.functions.DestroyJavaVM(jvm);
 	}
 }
 
