@@ -155,7 +155,7 @@ class DSolution : Solution {
  * from this class, avoiding many repeated small memory allocations and releases. For convenience,
  * both buffers will have an equal size.
  */
-private class BufPassSolution(string Linkage, string Name) : Solution {
+private class BufPassSolution(string Linkage) : Solution {
 	protected immutable size_t bufferSize = 64;
 	protected static char* buffer1, buffer2;
 
@@ -169,7 +169,7 @@ private class BufPassSolution(string Linkage, string Name) : Solution {
 		buffer2 = cast(char*) malloc(64);
 	}
 
-	this(Function func, string name = Name) {
+	this(Function func, string name) {
 		super(name);
 		this.func = func;
 	}
@@ -192,17 +192,29 @@ private class BufPassSolution(string Linkage, string Name) : Solution {
 	}
 }
 
-alias CSolution = BufPassSolution!("C", "C");
+class CSolution : BufPassSolution!"C" {
+	this(Function func, string name = "C") {
+		super(func, name);
+	}
+}
 mixin template CExtern(string Symbol) {
 	mixin("extern (C) void " ~ Symbol ~ "(char*, char*, size_t);");
 }
 
-alias CppSolution = BufPassSolution!("C++", "C++");
+class CppSolution : BufPassSolution!"C++" {
+	this(Function func, string name = "C++") {
+		super(func, name);
+	}
+}
 mixin template CppExtern(string Symbol) {
 	mixin("extern (C++) void " ~ Symbol ~ "(char*, char*, size_t);");
 }
 
-alias RustSolution = BufPassSolution!("C", "Rust");
+class RustSolution : BufPassSolution!"C" {
+	this(Function func, string name = "Rust") {
+		super(func, name);
+	}
+}
 
 class GuileSolution : Solution {
 	private string filename;
@@ -467,7 +479,7 @@ class JavaSolution : Solution {
 }
 
 
-class DotNetSolution : BufPassSolution!("C", "C#") {
+class DotNetSolution : BufPassSolution!"C" {
 	private static int function(const char*, const char*, const char*, const char*, void*, void**)
 		load_assembly_and_get_function_pointer;
 
@@ -495,8 +507,8 @@ class DotNetSolution : BufPassSolution!("C", "C#") {
 		);
 	}
 
-	this(Function func) {
-		super(func);
+	this(Function func, string name = "C#") {
+		super(func, name);
 	}
 
 	static Function getFunctionPointer(ushort year, ubyte day) {
