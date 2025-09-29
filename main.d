@@ -22,7 +22,7 @@ import std.stdio : File, write;
 import std.typecons : Nullable, tuple;
 
 import aoc : Answers;
-import registry : getSolutions, isSlow, registerForkInterpreterSolutions,
+import registry : getSolutions, isSlow, registerDotNetSolutions, registerForkInterpreterSolutions,
 	   registerInProcInterpreterSolutions, registerJvmSolutions;
 
 void main(string[] args) {
@@ -47,6 +47,7 @@ void main(string[] args) {
 		bool ranSolution = false;
 
 		registerJvmSolutions(year, day);
+		registerDotNetSolutions(year, day);
 		registerInProcInterpreterSolutions(year, day);
 		registerForkInterpreterSolutions(year, day);
 

@@ -24,6 +24,7 @@ import core.stdc.stdlib : free, malloc;
 import core.sys.posix.dlfcn : RTLD_LAZY, dlopen, dlsym;
 
 import aoc : Answers;
+import dotnet;
 import guile;
 import java;
 import lua;
@@ -57,6 +58,16 @@ void registerJvmSolutions(ushort year, ubyte day) {
 			registry[yearDay] ~= new JavaSolution(year, day);
 			break;
 		}
+	}
+}
+
+void registerDotNetSolutions(ushort year, ubyte day) {
+	immutable yearDay = YearDay(year, day);
+	registry.require(yearDay, []);
+
+	immutable func = DotNetSolution.getFunctionPointer(year, day);
+	if (func != null) {
+		registry[yearDay] ~= new DotNetSolution(func);
 	}
 }
 
@@ -452,6 +463,57 @@ class JavaSolution : Solution {
 
 	shared static ~this() {
 		jvm.functions.DestroyJavaVM(jvm);
+	}
+}
+
+
+class DotNetSolution : BufPassSolution!("C", "C#") {
+	private static int function(const char*, const char*, const char*, const char*, void*, void**)
+		load_assembly_and_get_function_pointer;
+
+	shared static this() {
+		char[256] path;
+		size_t size = 256;
+		get_hostfxr_path(cast(char*) path, &size, null);
+		auto libHostfxr = dlopen(cast(char*) path, RTLD_LAZY);
+
+		hostfxr_handle hostfxr;
+		auto hostfxr_initialize_for_runtime_config =
+			cast(int function(const char*, void*, hostfxr_handle*))
+			libHostfxr.dlsym("hostfxr_initialize_for_runtime_config");
+		auto result = hostfxr_initialize_for_runtime_config(
+				"builddir/dotnet/bin/Debug/net9.0/advent-of-code.runtimeconfig.json",
+				null, &hostfxr);
+
+		auto hostfxr_get_runtime_delegate =
+			cast(int function(hostfxr_handle, int, void**))
+			libHostfxr.dlsym("hostfxr_get_runtime_delegate");
+		hostfxr_get_runtime_delegate(
+				hostfxr,
+				hostfxr_delegate_type.hdt_load_assembly_and_get_function_pointer,
+				cast(void**)&load_assembly_and_get_function_pointer
+		);
+	}
+
+	this(Function func) {
+		super(func);
+	}
+
+	static Function getFunctionPointer(ushort year, ubyte day) {
+		Function func;
+		auto result = load_assembly_and_get_function_pointer(
+				"builddir/dotnet/bin/Debug/net9.0/advent-of-code.dll",
+				format("CSharpY%dD%02d, advent-of-code", year, day).toStringz,
+				"Solve",
+				cast(const char*) -1, // UNMANAGEDCALLERSONLY_METHOD
+				null,
+				cast(void**) &func
+		);
+		if (result != 0) {
+			return null;
+		} else {
+			return func;
+		}
 	}
 }
 
