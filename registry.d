@@ -421,7 +421,9 @@ class JavaSolution : Solution {
 
 	shared static this() {
 		auto libJava = dlopen("/usr/lib/jvm/jre-25/lib/server/libjvm.so", RTLD_LAZY);
-		auto JNI_GetDefaultJavaVMInitArgs = cast(jint function(void*)) libJava.dlsym("JNI_GetDefaultJavaVMInitArgs");
+		auto JNI_GetDefaultJavaVMInitArgs = cast(jint function(void*))
+			libJava.dlsym("JNI_GetDefaultJavaVMInitArgs");
+
 		JavaVMInitArgs jvmInitArgs;
 		jvmInitArgs.jniVersion = 0x00180000; // JNI_VERSION_24
 		jvmInitArgs.nOptions = 1;
@@ -429,17 +431,21 @@ class JavaSolution : Solution {
 		JavaVMOption[] jvmOptions = [{classPathArg.toStringz}];
 		jvmInitArgs.options = &jvmOptions[0];
 
-		auto JNI_CreateJavaVM = cast(jint function(JavaVM**, JNIEnv**, void*)) libJava.dlsym("JNI_CreateJavaVM");
+		auto JNI_CreateJavaVM = cast(jint function(JavaVM**, JNIEnv**, void*))
+			libJava.dlsym("JNI_CreateJavaVM");
 		if (auto result = JNI_CreateJavaVM(&jvm, &jni, &jvmInitArgs) != JNI_OK) {
 			throw new Exception(format("JNI_CreateJavaVM: %d", result));
 		}
 
 		auto solutionInterface = jni.functions.FindClass(jni, "aoc/AdventOfCode$Solution");
-		solveMethodId = jni.functions.GetMethodID(jni, solutionInterface, "solve", "()Laoc/AdventOfCode$Answers;");
+		solveMethodId = jni.functions.GetMethodID(jni, solutionInterface, "solve",
+				"()Laoc/AdventOfCode$Answers;");
 
 		auto answersClass = jni.functions.FindClass(jni, "aoc/AdventOfCode$Answers");
-		answerPart1MethodId = jni.functions.GetMethodID(jni, answersClass, "part1", "()Ljava/lang/String;");
-		answerPart2MethodId = jni.functions.GetMethodID(jni, answersClass, "part2", "()Ljava/lang/String;");
+		answerPart1MethodId = jni.functions.GetMethodID(jni, answersClass, "part1",
+				"()Ljava/lang/String;");
+		answerPart2MethodId = jni.functions.GetMethodID(jni, answersClass, "part2",
+				"()Ljava/lang/String;");
 	}
 
 	private string javaClassFqname;
@@ -457,6 +463,11 @@ class JavaSolution : Solution {
 		sw.restart();
 		auto javaResult = jni.functions.CallObjectMethod(jni, javaObject, solveMethodId);
 		sw.stop();
+
+		if (jni.functions.ExceptionOccurred(jni)) {
+			jni.functions.ExceptionDescribe(jni);
+			return Answers("exception", "thrown");
+		}
 
 		Answers answers;
 

@@ -26,6 +26,7 @@ alias jsize = jint;
 alias jobject = void*;
 alias jclass = jobject;
 alias jstring = jobject;
+alias jthrowable = jobject;
 
 alias jmethodID = void*;
 
@@ -36,12 +37,15 @@ struct JNINativeInterface {
 
 	void*[2] unused1; // GetVersion, DefineClass
 	jclass function(JNIEnv*, const char*) FindClass;
-	void*[21] unused2; // FromReflectedMethod -- AllocObject
+	void*[8] unused2; // FromReflectedMethod -- AllocObject
+	jthrowable function(JNIEnv*) ExceptionOccurred;
+	void function(JNIEnv*) ExceptionDescribe;
+	void*[11] unused3; // ExceptionClear -- AllocObject
 	jobject function(JNIEnv*, jclass, jmethodID, ...) NewObject;
-	void*[4] unused3; // NewObjectV -- IsInstanceOf
+	void*[4] unused4; // NewObjectV -- IsInstanceOf
 	jmethodID function(JNIEnv*, jclass, const char*, const char*) GetMethodID;
 	jobject function(JNIEnv*, jobject, jmethodID, ...) CallObjectMethod;
-	void*[134] unused4; // CallObjectMethodV -- GetStringUTFLength
+	void*[134] unused5; // CallObjectMethodV -- GetStringUTFLength
 	const char* function(JNIEnv*, jstring, jboolean*) GetStringUTFChars;
 	void function(JNIEnv*, jstring, const char*) ReleaseStringUTFChars;
 }
