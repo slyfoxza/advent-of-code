@@ -13,5 +13,6 @@
 # You should have received a copy of the GNU General Public License along with this repository. If
 # not, see <https://www.gnu.org/licenses/>.
 set -o errexit
+dotnet build
 JAVA_HOME=/usr/lib/jvm/java-25-openjdk ./gradlew build
 exec ninja -C builddir
