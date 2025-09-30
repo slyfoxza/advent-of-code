@@ -31,6 +31,7 @@ executable(
   'y2015/d05/d.d', 'y2015/d05/c.c',
   'y2015/d06/d.d',
   'y2015/d08/d.d',
+  'y2015/d09/d.d',
   dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
   link_args : [
     # Is there a portable way of finding this path?
