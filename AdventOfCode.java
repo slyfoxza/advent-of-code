@@ -16,7 +16,11 @@ package aoc;
 public class AdventOfCode {
 	private AdventOfCode() {}
 
-	public record Answers(String part1, String part2) {}
+	public record Answers(String part1, String part2) {
+		public Answers(final int part1, final int part2) {
+			this(Integer.toString(part1), Integer.toString(part2));
+		}
+	}
 
 	public interface Solution {
 		Answers solve();
