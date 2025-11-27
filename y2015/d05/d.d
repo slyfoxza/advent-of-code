@@ -22,11 +22,15 @@ import aoc;
 import registry;
 
 mixin CExtern!"c_y2015_d05";
+mixin CppExtern!"cpp_y2015_d05";
+mixin CExtern!"rust_y2015_d05";
 
 shared static this() {
 	register(2015, 5,
 			new CSolution(&c_y2015_d05),
+			new CppSolution(&cpp_y2015_d05),
 			new DSolution(&d_y2015_d05),
+			new RustSolution(&rust_y2015_d05),
 	);
 }
 

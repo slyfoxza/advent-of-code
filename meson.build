@@ -28,14 +28,17 @@ executable(
   'y2015/d02/d.d', 'y2015/d02/c.c', 'y2015/d02/cpp.cpp',
   'y2015/d03/d.d', 'y2015/d03/c.c', 'y2015/d03/cpp.cpp',
   'y2015/d04/d.d',
-  'y2015/d05/d.d', 'y2015/d05/c.c',
+  'y2015/d05/d.d', 'y2015/d05/c.c', 'y2015/d05/cpp.cpp',
   'y2015/d06/d.d',
   'y2015/d08/d.d',
   'y2015/d09/d.d',
   dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
   link_args : [
-    # Is there a portable way of finding this path?
-    '/usr/lib64/dotnet/packs/Microsoft.NETCore.App.Host.fedora.42-x64/9.0.8/runtimes/fedora.42-x64/native/libnethost.a',
+    run_command(
+      'find', '/usr/lib64/dotnet', '-name', 'libnethost.a',
+      capture : true,
+      check : true
+    ).stdout().strip(),
   ],
   link_with : rust_lib
 )
