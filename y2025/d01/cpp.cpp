@@ -11,56 +11,31 @@
  *
  * You should have received a copy of the GNU General Public License along with this repository. If
  * not, see <https://www.gnu.org/licenses/>. */
-module y2025_d01;
+#include <cstring>
+#include <fstream>
 
-import std.conv;
-import std.format;
-import std.math;
-import std.stdio;
+void cpp_y2025_d01(char* buf1, char* buf2, size_t buflen) {
+	std::ifstream f("y2025/d01/input");
 
-import aoc;
-import registry;
-
-mixin CExtern!"c_y2025_d01";
-mixin CppExtern!"cpp_y2025_d01";
-mixin CExtern!"rust_y2025_d01";
-
-shared static this() {
-	register(2025, 1,
-			new CSolution(&c_y2025_d01),
-			new CppSolution(&cpp_y2025_d01),
-			new DSolution(&d_y2025_d01),
-			new RustSolution(&rust_y2025_d01),
-	);
-}
-
-Answers d_y2025_d01() {
-	uint zeroes = 0, clicks = 0;
 	int dial = 50;
-	foreach (line; File("y2025/d01/input").byLine) {
-		char dir;
-		int sign = 1;
+	int zeroes = 0, clicks = 0;
+	while (true) {
+		char c;
 		int value;
-		line.formattedRead("%c%d", dir, value);
+		f >> c >> value;
+		if (f.eof() || f.fail()) break;
+		int sign = c == 'L' ? -1 : 1;
 
 		while (value > 100) {
 			value -= 100;
 			clicks++;
 		}
 
-		if (dir == 'L') {
-			sign = -1;
-		}
 		int dialStart = dial;
-		int dialNoMod = dial + (sign * value);
-		dial = dialNoMod % 100;
-		while (dial < 0) {
-			dial += 100;
-		}
+		dial = (dial + (sign * value)) % 100;
+		if (dial < 0) dial += 100;
 
-		if (dial == 0) {
-			zeroes++;
-		}
+		if (dial == 0) zeroes++;
 
 		if (dialStart != 0 && sign == -1 && value >= dialStart) {
 			clicks++;
@@ -69,5 +44,6 @@ Answers d_y2025_d01() {
 		}
 	}
 
-	return Answers(zeroes.to!string, clicks.to!string);
+	strncpy(buf1, std::to_string(zeroes).c_str(), buflen);
+	strncpy(buf2, std::to_string(clicks).c_str(), buflen);
 }

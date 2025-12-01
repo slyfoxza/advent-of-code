@@ -11,56 +11,37 @@
  *
  * You should have received a copy of the GNU General Public License along with this repository. If
  * not, see <https://www.gnu.org/licenses/>. */
-module y2025_d01;
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-import std.conv;
-import std.format;
-import std.math;
-import std.stdio;
+void c_y2025_d01(char* buf1, char* buf2, size_t buflen) {
+	FILE* f = fopen("y2025/d01/input", "r");
+	if (f == NULL) {
+		strncpy(buf1, "Error:", buflen);
+		strerror_r(errno, buf2, buflen);
+		return;
+	}
 
-import aoc;
-import registry;
-
-mixin CExtern!"c_y2025_d01";
-mixin CppExtern!"cpp_y2025_d01";
-mixin CExtern!"rust_y2025_d01";
-
-shared static this() {
-	register(2025, 1,
-			new CSolution(&c_y2025_d01),
-			new CppSolution(&cpp_y2025_d01),
-			new DSolution(&d_y2025_d01),
-			new RustSolution(&rust_y2025_d01),
-	);
-}
-
-Answers d_y2025_d01() {
-	uint zeroes = 0, clicks = 0;
+	char* line = NULL;
+	size_t n;
 	int dial = 50;
-	foreach (line; File("y2025/d01/input").byLine) {
-		char dir;
-		int sign = 1;
-		int value;
-		line.formattedRead("%c%d", dir, value);
+	int zeroes = 0, clicks = 0;
+	while (getline(&line, &n, f) != -1) {
+		int value = atoi(line + 1);
+		int sign = line[0] == 'L' ? -1 : 1;
 
 		while (value > 100) {
 			value -= 100;
 			clicks++;
 		}
 
-		if (dir == 'L') {
-			sign = -1;
-		}
 		int dialStart = dial;
-		int dialNoMod = dial + (sign * value);
-		dial = dialNoMod % 100;
-		while (dial < 0) {
-			dial += 100;
-		}
+		dial = (dial + (sign * value)) % 100;
+		if (dial < 0) dial += 100;
 
-		if (dial == 0) {
-			zeroes++;
-		}
+		if (dial == 0) zeroes++;
 
 		if (dialStart != 0 && sign == -1 && value >= dialStart) {
 			clicks++;
@@ -69,5 +50,15 @@ Answers d_y2025_d01() {
 		}
 	}
 
-	return Answers(zeroes.to!string, clicks.to!string);
+	free(line);
+	if (ferror(f)) {
+		strncpy(buf1, "Error:", buflen);
+		strerror_r(errno, buf2, buflen);
+		fclose(f);
+		return;
+	}
+	fclose(f);
+
+	snprintf(buf1, buflen, "%d", zeroes);
+	snprintf(buf2, buflen, "%d", clicks);
 }
