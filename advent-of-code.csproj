@@ -15,7 +15,7 @@ not, see <https://www.gnu.org/licenses/>.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 </Project>

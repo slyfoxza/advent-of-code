@@ -505,7 +505,7 @@ class DotNetSolution : BufPassSolution!"C" {
 			cast(int function(const char*, void*, hostfxr_handle*))
 			libHostfxr.dlsym("hostfxr_initialize_for_runtime_config");
 		auto result = hostfxr_initialize_for_runtime_config(
-				"builddir/dotnet/bin/Release/net9.0/advent-of-code.runtimeconfig.json",
+				"builddir/dotnet/bin/Release/net10.0/advent-of-code.runtimeconfig.json",
 				null, &hostfxr);
 
 		auto hostfxr_get_runtime_delegate =
@@ -525,7 +525,7 @@ class DotNetSolution : BufPassSolution!"C" {
 	static Function getFunctionPointer(ushort year, ubyte day) {
 		Function func;
 		auto result = load_assembly_and_get_function_pointer(
-				"builddir/dotnet/bin/Release/net9.0/advent-of-code.dll",
+				"builddir/dotnet/bin/Release/net10.0/advent-of-code.dll",
 				format("CSharpY%dD%02d, advent-of-code", year, day).toStringz,
 				"Solve",
 				cast(const char*) -1, // UNMANAGEDCALLERSONLY_METHOD
