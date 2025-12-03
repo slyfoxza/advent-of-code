@@ -36,7 +36,7 @@ executable(
   dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
   link_args : [
     run_command(
-      'find', '/usr/lib64/dotnet', '-name', 'libnethost.a',
+      'find', '/usr/lib64/dotnet', '-path', '*/9.*', '-name', 'libnethost.a',
       capture : true,
       check : true
     ).stdout().strip(),
