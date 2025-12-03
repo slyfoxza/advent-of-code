@@ -1,3 +1,5 @@
 /.gradle/
 
 __pycache__/
+y*/d*/example*
+y*/d*/input
