@@ -88,11 +88,9 @@ void c_y2025_d04(char* buf1, char* buf2, size_t buflen) {
 		pbuffer += len;
 	}
 
-	char* part1Grid = malloc(bufsize);
-	memcpy(part1Grid, buffer, bufsize);
-	int accessible = removeRolls(part1Grid, w, h);
+	int accessible = removeRolls(buffer, w, h);
 
-	int totalRemoved = 0;
+	int totalRemoved = accessible;
 	int removed;
 	while ((removed = removeRolls(buffer, w, h)) != 0) {
 		totalRemoved += removed;

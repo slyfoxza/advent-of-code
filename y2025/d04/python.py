@@ -11,7 +11,6 @@
 #
 # You should have received a copy of the GNU General Public License along with this repository. If
 # not, see <https://www.gnu.org/licenses/>.
-from copy import deepcopy
 import itertools
 
 def remove_rolls(grid) -> int:
@@ -47,12 +46,11 @@ def python_y2025_d04():
     with open("y2025/d04/input") as f:
         while len(line := f.readline().rstrip()) != 0:
             grid.append(list(line))
-    grid2 = deepcopy(grid)
 
     accessible = remove_rolls(grid)
 
-    total_removed = 0
-    while (removed := remove_rolls(grid2)) != 0:
+    total_removed = accessible
+    while (removed := remove_rolls(grid)) != 0:
         total_removed += removed
 
     return (accessible, total_removed)

@@ -38,6 +38,23 @@ export default function (plop) {
 			},
 		],
 	});
+	plop.setGenerator('csharp', {
+		prompts: [
+			...commonPrompts,
+			{
+				type: 'list',
+				name: 'readMode',
+				choices: ['line'],
+			},
+		],
+		actions: [
+			{
+				type: 'add',
+				path: `${directory}/csharp.cs`,
+				templateFile: 'plop-templates/csharp.hbs',
+			},
+		],
+	});
 	plop.setGenerator('python', {
 		prompts: [
 			...commonPrompts,
