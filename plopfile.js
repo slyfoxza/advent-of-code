@@ -15,16 +15,32 @@ export default function (plop) {
 	plop.setHelper('equals', (a, b) => a == b);
 	plop.setHelper('zeroPadStart', (value, length) => value.toString().padStart(length, "0"));
 
+	const commonPrompts = [
+		{ type: 'number', name: 'year' },
+		{ type: 'number', name: 'day' },
+	];
+	const directory = 'y{{year}}/d{{zeroPadStart day 2}}';
+
+	plop.setGenerator('c', {
+		prompts: [
+			...commonPrompts,
+			{
+				type: 'list',
+				name: 'readMode',
+				choices: ['line'],
+			},
+		],
+		actions: [
+			{
+				type: 'add',
+				path: `${directory}/c.c`,
+				templateFile: 'plop-templates/c.hbs',
+			},
+		],
+	});
 	plop.setGenerator('python', {
 		prompts: [
-			{
-				type: 'number',
-				name: 'year',
-			},
-			{
-				type: 'number',
-				name: 'day',
-			},
+			...commonPrompts,
 			{
 				type: 'list',
 				name: 'readMode',
@@ -34,7 +50,7 @@ export default function (plop) {
 		actions: [
 			{
 				type: 'add',
-				path: 'y{{year}}/d{{zeroPadStart day 2}}/python.py',
+				path: `${directory}/python.py`,
 				templateFile: 'plop-templates/python.hbs',
 			},
 		],
