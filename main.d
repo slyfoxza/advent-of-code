@@ -27,10 +27,14 @@ import registry : getSolutions, isSlow, registerDotNetSolutions, registerForkInt
 
 void main(string[] args) {
 	bool slow = false;
+	ushort yearFilter = 0;
+	ushort dayFilter = 0;
 
 	auto helpInformation = getopt(
 		args,
 		"slow", &slow,
+		"year|y", &yearFilter,
+		"day|d", &dayFilter,
 	);
 	if (helpInformation.helpWanted) {
 		defaultGetoptPrinter("Advent of Code", helpInformation.options);
@@ -38,6 +42,12 @@ void main(string[] args) {
 	}
 
 	foreach(year, day, expected; readAnswers()) {
+		if (yearFilter != 0 && year != yearFilter) {
+			continue;
+		}
+		if (dayFilter != 0 && day != dayFilter) {
+			continue;
+		}
 		if (!slow && isSlow(year, day)) {
 			continue;
 		}
