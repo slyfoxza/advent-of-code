@@ -55,6 +55,23 @@ export default function (plop) {
 			},
 		],
 	});
+	plop.setGenerator('d', {
+		prompts: [
+			...commonPrompts,
+			{
+				type: 'list',
+				name: 'readMode',
+				choices: ['line'],
+			},
+		],
+		actions: [
+			{
+				type: 'add',
+				path: `${directory}/d.d`,
+				templateFile: 'plop-templates/d.hbs',
+			},
+		],
+	});
 	plop.setGenerator('python', {
 		prompts: [
 			...commonPrompts,
