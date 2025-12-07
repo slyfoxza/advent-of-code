@@ -35,6 +35,7 @@ private Solution[][YearDay] registry;
 
 immutable SlowYearDays = [
 	YearDay(2015, 4),
+	YearDay(2015, 15),
 ];
 
 bool isSlow(ushort year, ubyte day) {
