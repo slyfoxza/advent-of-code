@@ -47,8 +47,6 @@ struct Connection {
 }
 
 Answers d_y2025_d08() {
-	writeln("");
-
 	JunctionBox[] boxes;
 	int nextCircuit = 0;
 	foreach (line; File("y2025/d08/input").byLine) {
