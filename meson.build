@@ -38,6 +38,7 @@ executable(
   'y2025/d08/d.d',
   'y2025/d09/d.d',
   'y2025/d10/d.d',
+  'y2025/d11/d.d',
   dependencies : [dependency('guile-3.0'), dependency('lua'), dependency('python3-embed')],
   link_args : [
     run_command(
